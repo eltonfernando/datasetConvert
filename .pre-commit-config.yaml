@@ -1,0 +1,44 @@
+repos:
+  - repo: https://github.com/psf/black
+    rev: 22.10.0
+    hooks:
+      - id: black
+        language_version: python3
+        stages:
+          - commit
+  - repo: local
+    hooks:
+      - id: run-tests
+        name: run tests
+        entry: pytest -s -v
+        language: python
+        additional_dependencies: [ pre-commit, pytest,tornado,pika ]
+        pass_filenames: false
+        always_run: true
+        stages:
+          - commit
+  - repo: local
+    hooks:
+      - id: pylint
+        name: pylint
+        entry: pylint
+        language: system
+        types: [ python ]
+        args:
+          [
+            "-sn", # Only display messages
+            "--rcfile=.pylintrc",
+            "--fail-on=I",
+            "--fail-under=7"
+          ]
+  - repo: local
+    hooks:
+      - id: example
+        name: example
+        entry: bash -c 'echo "run test bash"'
+        language: system
+        pass_filenames: false
+        stages:
+          - commit
+
+
