@@ -5,7 +5,7 @@ from .connection import DBConnection
 
 
 class TableAnnotation(Base):
-    __tablename__ = "anotation"
+    __tablename__ = "annotation"
 
     name_image = Column(String, primary_key=True)
     image = relationship("TableImage", backref="image", lazy="subquery")
@@ -38,7 +38,7 @@ class TableImage(Base):
     width = Column(Integer, nullable=False)
     heigth = Column(Integer, nullable=False)
     channel = Column(Integer, nullable=False)
-    name_image = Column(String, ForeignKey("anotation.name_image"), nullable=False)
+    name_image = Column(String, ForeignKey("annotation.name_image"), nullable=False)
 
     def __init__(self,name_image, width,heigth,channel):
         self.name_image = name_image

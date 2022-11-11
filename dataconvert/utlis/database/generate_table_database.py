@@ -8,7 +8,7 @@ def create_database():
     meta_data = MetaData()
 
     table_anotation = Table(
-        "anotation",
+        "annotation",
         meta_data,
         Column("name_image", String, primary_key=True),
     )
@@ -21,13 +21,13 @@ def create_database():
         Column("height", Integer, nullable=False),
         Column("channel", Integer, nullable=False),
         Column("blob_image", BLOB),
-        Column("name_image", String, ForeignKey("anotation.name_image"), nullable=True),
+        Column("name_image", String, ForeignKey("annotation.name_image"), nullable=True),
     )
     table_boundbox = Table(
         "boundbox",
         meta_data,
         Column("id", Integer, primary_key=True, autoincrement=True),
-        Column("name_image", String, ForeignKey("anotation.name_image"), nullable=True),
+        Column("name_image", String, ForeignKey("annotation.name_image"), nullable=True),
         Column("label", String, nullable=False),
         Column("x_min", Integer, nullable=False),
         Column("y_min", Integer, nullable=False),
