@@ -1,7 +1,7 @@
 from unittest import mock
 from mock_alchemy.mocking import UnifiedAlchemyMagicMock
-from ..tables import TableAnotation
-from ..repository import AnotationRepo
+from dataconvert.database import TableAnnotation, RepAnnotation
+
 
 
 class ConnectionHandlerMock:
@@ -10,11 +10,11 @@ class ConnectionHandlerMock:
             data=[
                 (
                     [
-                        mock.call.query(TableAnotation),
-                        mock.call.filter(TableAnotation.name_image == "xxx.jpg"),
+                        mock.call.query(TableAnnotation),
+                        mock.call.filter(TableAnnotation.name_image == "xxx.jpg"),
                     ],
                     [
-                        TableAnotation(
+                        TableAnnotation(
                             name_image="xxx.jpg",
                             bandboxs="",
                             size_image="(10,20)",
@@ -26,7 +26,7 @@ class ConnectionHandlerMock:
         )
 
 
-def tes_select():
-    result = AnotationRepo(ConnectionHandlerMock)
+def tess_select():
+    result = RepAnnotation(ConnectionHandlerMock)
     response = result.select()
     print(response)

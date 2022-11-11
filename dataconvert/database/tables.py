@@ -33,18 +33,20 @@ class TableBoundbox(Base):
 
 
 class TableImage(Base):
-    __tablename__ = "image"
+    __tablename__ = "metadata"
     id = Column(Integer, primary_key=True, autoincrement=True)
     width = Column(Integer, nullable=False)
-    heigth = Column(Integer, nullable=False)
+    height = Column(Integer, nullable=False)
     channel = Column(Integer, nullable=False)
+    blob = Column(BLOB)
     name_image = Column(String, ForeignKey("annotation.name_image"), nullable=False)
 
-    def __init__(self,name_image, width,heigth,channel):
+    def __init__(self,name_image, width,height,channel,blob):
         self.name_image = name_image
         self.width = width
-        self.heigth  = heigth
+        self.height  = height
         self.channel = channel
+        self.blob = blob
 
     def __repr__(self):
         return f"TableImage {self.id}: {self.name_image}: {self.width}: {self.heigth}: {self.channel}"

@@ -1,8 +1,16 @@
 from sqlalchemy.exc import IntegrityError
+from dataclasses import dataclass
 from ..tables import TableAnnotation, TableImage, TableBoundbox
 from ..connection import DBConnection
 
-
+@dataclass
+class MetadataImage:
+    name_image: str
+    width: int
+    height: int
+    channel: int
+    blob: bytes
+    
 class RepImage:
     def __init__(self, connect=DBConnection):
         self.__connect = connect
@@ -30,10 +38,15 @@ class RepImage:
             )
             return data
 
-    def insert(self, name_image, blob_image):
+    def insert(self,data_image: MetadataImage):
         with self.__connect() as db:
             try:
-                data_insert = TableImage(name_image=name_image, blob_image=blob_image)
+                data_insert = TableImage(
+                    name_image=data_image.name_image,
+                    width= data_image.width,
+                    height= data_image.height,
+                    channel= data_image.channel,
+                    blob = data_image.blob)
                 db.session.add(data_insert)
                 db.session.commit()
             except Exception as error:

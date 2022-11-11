@@ -14,13 +14,13 @@ def create_database():
     )
 
     table_images = Table(
-        "bytes_image",
+        "metadata",
         meta_data,
         Column("id", Integer, primary_key=True, autoincrement=True),
         Column("width", Integer, nullable=False),
         Column("height", Integer, nullable=False),
         Column("channel", Integer, nullable=False),
-        Column("blob_image", BLOB),
+        Column("blob", BLOB),
         Column("name_image", String, ForeignKey("annotation.name_image"), nullable=True),
     )
     table_boundbox = Table(

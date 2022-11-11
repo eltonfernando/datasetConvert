@@ -5,10 +5,10 @@ image_name = "test3"
 repro.insert(image_name)
 
 box = Boundbox(
-    name_image=" test3",
+    name_image=" test6",
     label="Elton",
     x_min =2,
-    y_min = 3,
+    y_min = 6,
     x_max= 20,
     y_max=30,
     confidencie=0.3)
