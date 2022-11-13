@@ -3,6 +3,8 @@ from database import RepAnnotation, RepImage, RepBoundbox, Boundbox
 repro = RepAnnotation()
 image_name = "test3"
 repro.insert(image_name)
+repro.chi
+
 
 box = Boundbox(
     name_image=" test6",
