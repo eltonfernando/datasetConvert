@@ -16,12 +16,12 @@ def create_database():
     table_images = Table(
         "metadata",
         meta_data,
-        Column("id", Integer, primary_key=True, autoincrement=True),
+        Column("name_image", String, ForeignKey("annotation.name_image"),primary_key=True, nullable=True),
         Column("width", Integer, nullable=False),
         Column("height", Integer, nullable=False),
         Column("channel", Integer, nullable=False),
         Column("blob", BLOB),
-        Column("name_image", String, ForeignKey("annotation.name_image"), nullable=True),
+        
     )
     table_boundbox = Table(
         "boundbox",
@@ -35,8 +35,11 @@ def create_database():
         Column("y_max", Integer, nullable=False),
         Column("confidencie", Float, nullable=False),
     )
+    path = "assets/base.db"
+    if os.path.isfile(path=path):
+        os.remove(path)
 
-    host_engine = os.path.join("sqlite:///db.db")
+    host_engine = os.path.join("sqlite:///"+path)
     engine = create_engine(host_engine)
     meta_data.create_all(engine)
 

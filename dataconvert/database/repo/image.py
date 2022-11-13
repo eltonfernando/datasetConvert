@@ -32,23 +32,27 @@ class RepImage:
                     TableAnnotation, TableImage.name_image == TableAnnotation.name_image
                 )
                 .with_entities(
-                    TableAnnotation.name_image, TableImage.size, TableImage.blob
+                    TableAnnotation.name_image, 
+                    TableImage.width,
+                    TableImage.height,
+                    TableImage.channel,
+                    TableImage.blob
                 )
                 .all()
             )
             return data
 
-    def insert(self,data_image: MetadataImage):
+    def insert(self,data_image: TableImage):
         with self.__connect() as db:
             try:
-                data_insert = TableImage(
-                    name_image=data_image.name_image,
-                    width= data_image.width,
-                    height= data_image.height,
-                    channel= data_image.channel,
-                    blob = data_image.blob)
-                db.session.add(data_insert)
+                db.session.add(data_image)
                 db.session.commit()
             except Exception as error:
                 db.session.rollback()
                 raise error
+    def delete(self,id: int)-> None:
+        with self.__connect() as db:
+            db.session.query(TableImage).filter(
+                TableImage.id == id
+            ).delete()
+            db.session.commit()

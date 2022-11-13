@@ -30,6 +30,7 @@ class RepBoundbox:
                     TableBoundbox.name_image == TableBoundbox.name_image,
                 )
                 .with_entities(
+                    TableBoundbox.id,
                     TableAnnotation.name_image,
                     TableBoundbox.label,
                     TableBoundbox.x_min,
@@ -42,20 +43,18 @@ class RepBoundbox:
             )
             return data
 
-    def insert(self, boundbox: Boundbox):
+    def insert(self, table: TableBoundbox):
         with self.__connect() as db:
             try:
-                data_insert = TableBoundbox(
-                    name_image=boundbox.name_image,
-                    label=boundbox.label,
-                    x_min=boundbox.x_min,
-                    y_min=boundbox.y_min,
-                    x_max=boundbox.x_max,
-                    y_max=boundbox.x_max,
-                    confidencie=boundbox.confidencie,
-                )
-                db.session.add(data_insert)
+                db.session.add(table)
                 db.session.commit()
             except Exception as error:
                 db.session.rollback()
                 raise error
+    
+    def delete(self,id: int)-> None:
+        with self.__connect() as db:
+            db.session.query(RepBoundbox).filter(
+                RepBoundbox.id == id
+            ).delete()
+            db.session.commit()

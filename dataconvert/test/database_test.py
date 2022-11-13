@@ -1,40 +1,113 @@
-from dataconvert.database import RepAnnotation, RepImage, RepBoundbox, Boundbox, MetadataImage
+import shutil
+import os
+from typing import List
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from dataconvert.database import (
+    RepAnnotation, 
+    RepImage, 
+    RepBoundbox, 
+    Boundbox, 
+    MetadataImage)
+from dataconvert.database.tables import TableImage, TableBoundbox, TableAnnotation 
 
-def stest_insert_annotation_image():
-    image_name = "teste2"
-    add_img = RepImage()
-    add_img.insert(MetadataImage(
+
+shutil.copy("assets/base.db","test.db")
+
+class DBConnectionTest:
+    """
+       manage datadase connection
+       
+       mysql+oursql://<user>:<password>@<host>[:<port>]/<dbname>
+       postgresql+psycopg2://scott:tiger@localhost:5432/mydatabase
+
+       see in utils/database on how to create the tables
+
+    """
+    def __init__(self) -> None:
+        self.__path = ""
+        self.__host_engine = os.path.join("sqlite:///test.db")
+        self.__engine = self.__create_database_engine()
+        self.session = None
+
+    def __create_database_engine(self):
+        return create_engine(self.__host_engine)
+
+    def get_engine(self):
+        return self.__engine
+
+    def __enter__(self):
+        session_make = sessionmaker(bind=self.__engine)
+        self.session = session_make()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.session.close()
+
+
+def test_add_all():
+    image_name = "image01.jpg"
+    input_table = [TableAnnotation(
         name_image= image_name,
-        width=500,
-        height= 400,
-        channel=3,
-        blob = bytearray(b'\xcdasf')
-    ))
+        children_boundbox=[
+            TableBoundbox(
+                label="teste 01",
+                x_min = 0,
+                y_min = 0,
+                x_max= 20,
+                y_max= 20,
+                confidencie=0.7
+            ),
+            TableBoundbox(
+                label="teste 02",
+                x_min = 3,
+                y_min = 3,
+                x_max= 40,
+                y_max= 40,
+                confidencie=0.95
+                )
 
-    repro = RepAnnotation()
-    
-    repro.insert(image_name)
-    result = RepAnnotation()
-    print(result.select())
+        ],
+        children_image=[
+            TableImage(
+                width=300,
+                height=400,
+                channel=3,
+                blob= bytearray(b'\btestasll')
+            )
+        ]
+    )
+    ]
+    repro = RepAnnotation(DBConnectionTest)
+    repro.add_all(input_table)
 
-def stest_inset_box():
-    name_image = "teste"
-    box = Boundbox(
-        name_image=name_image,
-        label="Elton",
-        x_min =2,
-        y_min = 6,
-        x_max= 20,
-        y_max=30,
-        confidencie=0.3)
+def test_insert():
 
-    boundbox = RepBoundbox()
-    boundbox.insert(box)
-    repro = RepAnnotation()
-    repro.insert(name_image=name_image)
+    input_data = TableAnnotation(
+        name_image="test_insert.jpg",
+        children_boundbox=[
+            TableBoundbox(
+                label="test",
+                y_min= 0,
+                x_min= 0,
+                x_max= 50,
+                y_max= 100,
+                confidencie=0.6
+            )
+        ],
+        children_image=[
+            TableImage(
+                width=320,
+                height=480,
+                channel=3,
+                blob=bytearray(b'\bldfdsadfadff')
+            )
+        ]
+    )
 
-def test_select_db():
-    result = RepAnnotation()
-    data  = result.select()
-    for obj in data:
-        print(obj)
+    repro = RepAnnotation(DBConnectionTest)
+    repro.insert(input_data)
+
+    print(repro.select())
+
+
