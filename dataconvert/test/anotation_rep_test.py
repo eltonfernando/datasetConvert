@@ -11,22 +11,25 @@ class ConnectionHandlerMock:
                 (
                     [
                         mock.call.query(TableAnnotation),
-                        mock.call.filter(TableAnnotation.name_image == "xxx.jpg"),
+                        mock.call.filter(TableAnnotation.name_image == "teste"),
                     ],
                     [
-                        TableAnnotation(
-                            name_image="xxx.jpg",
-                            bandboxs="",
-                            size_image="(10,20)",
-                            key_point="[[x,y]]",
-                        )
+                        TableAnnotation(name_image="xxx.jpg"),
+                        TableAnnotation(name_image="teste"),
                     ],
                 )
             ]
         )
+    def __enter__(self):
+        #session_make = sessionmaker(bind=self.__engine)
+        #self.session = session_make()
+        return self
+        
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.session.close()
 
 
-def tess_select():
+def test_select():
     result = RepAnnotation(ConnectionHandlerMock)
     response = result.select()
     print(response)

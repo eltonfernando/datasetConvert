@@ -1,6 +1,6 @@
 from dataconvert.database import RepAnnotation, RepImage, RepBoundbox, Boundbox, MetadataImage
 
-def test_insert_annotation_image():
+def stest_insert_annotation_image():
     image_name = "teste2"
     add_img = RepImage()
     add_img.insert(MetadataImage(
@@ -32,3 +32,9 @@ def stest_inset_box():
     boundbox.insert(box)
     repro = RepAnnotation()
     repro.insert(name_image=name_image)
+
+def test_select_db():
+    result = RepAnnotation()
+    data  = result.select()
+    for obj in data:
+        print(obj)
