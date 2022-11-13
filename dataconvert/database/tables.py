@@ -1,7 +1,6 @@
-from sqlalchemy import Column, String, Integer, MetaData, Table, ForeignKey, BLOB, Float
+from sqlalchemy import Column, String, Integer, ForeignKey, BLOB, Float
 from sqlalchemy.orm import relationship
 from .base import Base
-from .connection import DBConnection
 
 
 class TableAnnotation(Base):
@@ -11,7 +10,7 @@ class TableAnnotation(Base):
     children_image = relationship("TableImage", back_populates="parent")
     children_boundbox = relationship("TableBoundbox", back_populates="parent")
 
-    def __init__(self,name_image,children_image=None,children_boundbox=None):
+    def __init__(self, name_image, children_image=None, children_boundbox=None):
         self.name_image = name_image
         self.children_boundbox = children_boundbox
         self.children_image = children_image
@@ -32,8 +31,8 @@ class TableBoundbox(Base):
     x_max = Column(String, nullable=False)
     y_max = Column(String, nullable=False)
     confidencie = Column(Float, nullable=False)
-    
-    def __init__(self,label,x_min,y_min,x_max,y_max,confidencie):
+
+    def __init__(self, label, x_min, y_min, x_max, y_max, confidencie):
         self.label = label
         self.x_min = x_min
         self.y_min = y_min
@@ -41,26 +40,27 @@ class TableBoundbox(Base):
         self.x_max = x_max
         self.confidencie = confidencie
 
-
     def __repr__(self):
         return f"TableImage {self.id}: {self.name_image}: {self.label}: {self.x_min}: {self.y_min}"
 
 
 class TableImage(Base):
     __tablename__ = "metadata"
-    name_image = Column(String, ForeignKey("annotation.name_image"),primary_key=True, nullable=False)
+    name_image = Column(
+        String, ForeignKey("annotation.name_image"), primary_key=True, nullable=False
+    )
     width = Column(Integer, nullable=False)
     height = Column(Integer, nullable=False)
     channel = Column(Integer, nullable=False)
     blob = Column(BLOB)
-    
+
     parent = relationship("TableAnnotation", back_populates="children_image")
 
-    def __init__(self, width,height,channel,blob):
+    def __init__(self, width, height, channel, blob):
         self.width = width
-        self.height  = height
+        self.height = height
         self.channel = channel
         self.blob = blob
 
     def __repr__(self):
-        return f"TableImage {self.id}: {self.width}: {self.heigth}: {self.channel}"
+        return f"TableImage {self.id}:{self.name_image} :{self.width}: {self.heigth}: {self.channel}"

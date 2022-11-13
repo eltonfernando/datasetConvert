@@ -1,13 +1,15 @@
-from sqlalchemy.exc import IntegrityError
 from dataclasses import dataclass
-from ..tables import TableAnnotation, TableImage, TableBoundbox
+from sqlalchemy.exc import IntegrityError
+from ..tables import TableAnnotation, TableBoundbox
 from ..connection import DBConnection
+
 
 @dataclass
 class Boundbox:
     """
-    Interface 
+    Interface
     """
+
     name_image: str
     label: str
     x_min: int
@@ -22,9 +24,9 @@ class RepBoundbox:
         self.__connect = connect
 
     def select(self):
-        with self.__connect() as db:
+        with self.__connect() as data_base:
             data = (
-                db.session.query(TableBoundbox)
+                data_base.session.query(TableBoundbox)
                 .join(
                     TableAnnotation,
                     TableBoundbox.name_image == TableBoundbox.name_image,
@@ -44,17 +46,17 @@ class RepBoundbox:
             return data
 
     def insert(self, table: TableBoundbox):
-        with self.__connect() as db:
+        with self.__connect() as data_base:
             try:
-                db.session.add(table)
-                db.session.commit()
-            except Exception as error:
-                db.session.rollback()
+                data_base.session.add(table)
+                data_base.session.commit()
+            except IntegrityError as error:
+                data_base.session.rollback()
                 raise error
-    
-    def delete(self,id: int)-> None:
-        with self.__connect() as db:
-            db.session.query(RepBoundbox).filter(
-                RepBoundbox.id == id
+
+    def delete(self, id: int) -> None:
+        with self.__connect() as data_base:
+            data_base.session.query(TableBoundbox).filter(
+                TableBoundbox.id == id
             ).delete()
-            db.session.commit()
+            data_base.session.commit()
